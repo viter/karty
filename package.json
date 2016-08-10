@@ -1,0 +1,27 @@
+{
+  "name": "karty",
+  "version": "1.0.0",
+  "description": "moya gra dytynstva :)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viter/karty.git"
+  },
+  "author": "Petro Boiko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viter/karty/issues"
+  },
+  "homepage": "https://github.com/viter/karty#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongoose": "^4.5.8",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "socket.io": "^1.4.8",
+    "socket.io-cookie": "0.0.1"
+  }
+}
