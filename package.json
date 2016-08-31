@@ -4,6 +4,7 @@
   "description": "moya gra dytynstva :)",
   "main": "app.js",
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,7 +18,10 @@
   },
   "homepage": "https://github.com/viter/karty#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "connect-mongo": "^1.3.2",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "mongoose": "^4.5.8",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
