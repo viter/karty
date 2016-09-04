@@ -10,7 +10,8 @@ var mongoose = require('mongoose');
 //var kitty = require('./models/kitty')(mongoose);
 var User = require('./models/user')(mongoose);
 var bodyParser = require('body-parser');
-
+app.set('views', './views');
+app.set('view engine', 'pug');
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -116,13 +117,12 @@ app.get('/logout', function(req, res){
 	res.redirect('/');
 });
 
-app.get('/page', function(req, res) {
-	req.session.pageUrl = '/page';
-	if(req.isAuthenticated()) {
-		res.sendFile(__dirname + '/public/page.html');
-	} else {
-		res.redirect('/login');
-	}
+
+var rooms = [];
+
+app.get('/game/:id', function(req, res) {
+	req.session.pageUrl = '/page/'+req.params.id;
+	res.render('game', {room:req.params.id});
 });
 
 app.get('/page1', function(req, res) {
@@ -136,6 +136,7 @@ app.get('/page1', function(req, res) {
 
 io.sockets.on("connection", function(socket) {
   console.log('socket.io session', socket.request.session);
+  socket.emit('news', {mynews: "hello world"});
 });
 
 server.listen(8080, function() {

@@ -100,25 +100,56 @@
       var shuffleCards = shuffle(cards);
       var playerCards = [];
       var positionX = 0;
-      //for(var i = 0; i <= 6; i++) {
-        //playerCards[i] = g.image(shuffleCards[i].url, positionX, 300, 120, 190 );
-        
-        //playerCards[i] = Snap.load(shuffleCards[i].url, function ( card ) {
-          //console.info(card);
-                                          //card.selectAll().attr( {viewBox: positionX+' 300 120 190' });
-                                         // g.append( card );
-                                         // g.hover( hoverover, hoverout );
-                                        //} );
-        //positionX += 70;
-      //
-      var hoverover = function() { g.animate({ transform: 's2r45,150,150' }, 1000, mina.bounce ) };
-      var hoverout = function() { g.animate({ transform: 's1r0,150,150' }, 1000, mina.bounce ) };
+      for(var i = 0; i < 6; i++) {
+        playerCards[i] = g.image(shuffleCards[i].url, positionX, 300, 120, 190 ).attr({id:'c'+i,class:'cardimage'});
+        positionX += 70; 
+      }
 
-      var image = g.image(cards[0].url, 200, 0, 170, 250 );
-      image.hover(() =>{
-        image.animate({ transform: 's2r45,150,150' }, 1000, mina.bounce );
-        image.animate({ transform: 's1r0,150,150' }, 1000, mina.bounce );
-      })
+      for(var j=0; j < 6; j++) {
+         console.log(playerCards[j]);
+        playerCards[j].hover(
+          function() {
+           
+            return hoverover(playerCards[j]);
+                }, 
+          function() { 
+                  //hoverout(g.select('#'+g.select(".cardimage").attr('id')));
+                  return hoverout(playerCards[j]);
+                }
+        );
+      }
+      var id = '';
+      playerCards[0].hover(
+          function() {
+            console.log(playerCards[0]);
+                  //hoverover(g.select('#'+g.select(".cardimage").attr('id')));
+                  hoverover(playerCards[0]);
+                }, 
+          function() { 
+                  //hoverout(g.select('#'+g.select(".cardimage").attr('id')));
+                  hoverout(playerCards[0]);
+                }
+        );
+      playerCards[1].hover(
+          function() {
+            console.log(playerCards[1]);
+                  //hoverover(g.select('#'+g.select(".cardimage").attr('id')));
+                  hoverover(playerCards[1]);
+                }, 
+          function() { 
+                  //hoverout(g.select('#'+g.select(".cardimage").attr('id')));
+                  hoverout(playerCards[1]);
+                }
+        );
+
+      var hoverover = function(el) { el.animate({ transform: 's2r45,150,150' }, 1000, mina.bounce ) };
+      var hoverout = function(el) { el.animate({ transform: 's1r0,150,150' }, 1000, mina.bounce ) };
+
+      //var image = g.image(cards[0].url, 200, 0, 170, 250 );
+      //image.animate({ transform: 's2r45,150,150' }, 5000, mina.bounce );
+        //image.animate({ transform: 's1r0,150,150' }, 5000, mina.bounce );
+      
+
       /*Snap.load("/public/img/king_of_diamonds2.svg", function (card) {
     // Note that we traverse and change attr before SVG is even added to the page (improving performance)
           //phone.selectAll("path[fill='#ff0000']").attr({fill: "#00ff00"});
