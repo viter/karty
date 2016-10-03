@@ -90,8 +90,8 @@ app.post('/', function(req, res) {
 	console.log(req.body.description);
 	Game.create({playersNumber: req.body.pn, description: req.body.description}, function(err, game) {
 		if(err) console.log(err);
+		res.redirect('/');
 	});
-	res.render('index');
 });
 
 app.get('/login', function(req, res) {
