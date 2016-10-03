@@ -9,6 +9,7 @@ var passportLocal = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 //var kitty = require('./models/kitty')(mongoose);
 var User = require('./models/user')(mongoose);
+var Game = require('./models/game')(mongoose);
 var bodyParser = require('body-parser');
 app.set('views', './views');
 app.set('view engine', 'pug');
@@ -77,12 +78,20 @@ app.use("/public", express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
 	console.log('user session:', req.session);
-	if (req.isAuthenticated()) {
-		console.log('authenticated');
-	} else {
-		console.log('not authenticated');
-	}
-	res.sendFile(__dirname + '/public/index.html');
+	Game.find(function(err, games) {
+		console.log(games);
+		res.render('index',{games: games});
+	});
+	
+});
+
+app.post('/', function(req, res) {
+	console.log(req.body.pn);
+	console.log(req.body.description);
+	Game.create({playersNumber: req.body.pn, description: req.body.description}, function(err, game) {
+		if(err) console.log(err);
+	});
+	res.render('index');
 });
 
 app.get('/login', function(req, res) {
