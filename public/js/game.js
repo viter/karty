@@ -1,9 +1,12 @@
-var socket = io.connect('http://localhost:8080');
+
+var room = document.getElementById("room").value;
+
+var socket = io();
       socket.on('news', function (data) {
         console.log(data.mynews);
         socket.emit('my other event', { my: 'data' });
       });
-
+console.log("room:", room);
 var cards = [
         {name: "sixOfClubs", url: "/public/img/6_of_clubs.png"},
         {name: "sixOfDiamonds", url: "/public/img/6_of_diamonds.png"},
