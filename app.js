@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 //var kitty = require('./models/kitty')(mongoose);
 var User = require('./models/user')(mongoose);
 var Game = require('./models/game')(mongoose);
+var Shuffle = require('./libs/shuffle');
 var bodyParser = require('body-parser');
 app.set('views', './views');
 app.set('view engine', 'pug');
@@ -77,7 +78,7 @@ app.use(passport.session());
 app.use("/public", express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
-	console.log('user session:', req.session);
+	//console.log('user session:', req.session);
 	Game.find(function(err, games) {
 		console.log(games);
 		res.render('index',{games: games});
@@ -86,8 +87,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-	console.log(req.body.pn);
-	console.log(req.body.description);
+	//console.log(req.body.pn);
+	//console.log(req.body.description);
 	Game.create({playersNumber: req.body.pn, description: req.body.description}, function(err, game) {
 		if(err) console.log(err);
 		res.redirect('/');
@@ -107,7 +108,7 @@ app.post('/login',
 */
 
 app.post('/login', function(req, res, next) {
-	console.log('express session', req.session.pageUrl);
+	//console.log('express session', req.session.pageUrl);
 	passport.authenticate('local', function(err, user, info) {
     if (err) { return next(err) }
         if (!user) { return res.redirect('/login') }
@@ -144,8 +145,20 @@ app.get('/page1', function(req, res) {
 });
 
 io.sockets.on("connection", function(socket) {
-  console.log('socket.io session', socket.request.session);
-  socket.emit('news', {mynews: "hello world"});
+  //console.log('socket.io session', socket.request.session);
+  
+  socket.on('join', room => {
+	console.log('room', room.room);
+	//socket.join(room);
+  });
+  socket.emit('enter', {mynews: "hello world"});
+
+  socket.on('shuffle', cards => {
+	  let shuffleCards = Shuffle(cards);
+	  socket.emit('shuffled', {shuffleCards});
+	  console.log('------------- shuffle-------');
+  });
+
 });
 
 server.listen(8080, function() {

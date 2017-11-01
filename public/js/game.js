@@ -1,11 +1,28 @@
 
 var room = document.getElementById("room").value;
+var startBtn = document.getElementById("start");
+
+startBtn.addEventListener("click", function() {
+  socket.emit("shuffle", cards);
+  startBtn.style.display = "none";
+});
 
 var socket = io();
-      socket.on('news', function (data) {
-        console.log(data.mynews);
-        socket.emit('my other event', { my: 'data' });
-      });
+socket.on('enter', function (data) {
+  console.log(data.mynews);
+  socket.emit('my other event', { my: 'data' });
+  socket.emit('join', {room: room});
+});
+
+socket.on("shuffled", function(shuffled){
+  console.log("^^^^^^^^^^^^^^",shuffled);
+  shuffleCards = shuffled.shuffleCards;
+  var loader = new PIXI.loaders.Loader();
+  loader
+    .add([shuffleCards[0].url, shuffleCards[1].url, shuffleCards[2].url, shuffleCards[3].url, shuffleCards[4].url, shuffleCards[5].url])
+    .onComplete.once(setup).load();
+  
+});
 console.log("room:", room);
 var cards = [
         {name: "sixOfClubs", url: "/public/img/6_of_clubs.png"},
@@ -45,7 +62,8 @@ var cards = [
         {name: "aceOfHearts", url: "/public/img/ace_of_hearts.png"},
         {name: "aceOfSpades", url: "/public/img/ace_of_spades.png"},
       ];
-var shuffleCards = shuffle(cards);
+
+var shuffleCards;
 var playerCards = [];
 var positionX = 50;
 var cardWidth = 150;
@@ -64,16 +82,16 @@ var scale = scaleToWindow(renderer.view);
       
 var stage = new PIXI.Container();
       
-PIXI.loader
-  .add([shuffleCards[0].url,shuffleCards[1].url,shuffleCards[2].url,shuffleCards[3].url,shuffleCards[4].url,shuffleCards[5].url])
-  .load(setup);
+
 
 function setup() {
+  console.log('setup', shuffleCards);
   //var sixOfClubs = new PIXI.Sprite(
    //PIXI.loader.resources["/public/img/6_of_clubs.png"].texture
    //);
   //console.log(shuffleCards[0].url);
   for(var i = 0; i < 6; i++) {
+    
     playerCards[i] = new PIXI.Sprite(PIXI.loader.resources[shuffleCards[i].url].texture);
     playerCards[i].width = cardWidth;
     playerCards[i].height = cardHeight;
@@ -87,9 +105,11 @@ function setup() {
     playerCards[i].mouseout = function(mouse) {
       this.y += 30;
     };
+    console.log('playerCard', shuffleCards[i]);
     stage.addChild(playerCards[i]);
     positionX += 70; 
   }
+  
         
   gameLoop();
 }
@@ -100,21 +120,3 @@ function gameLoop() {
   renderer.render(stage);
 }
 
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex ;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
