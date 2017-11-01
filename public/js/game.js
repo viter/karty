@@ -1,7 +1,7 @@
 
 var room = document.getElementById("room").value;
 var startBtn = document.getElementById("start");
-
+var loader = new PIXI.loaders.Loader();
 startBtn.addEventListener("click", function() {
   socket.emit("shuffle", cards);
   startBtn.style.display = "none";
@@ -17,10 +17,9 @@ socket.on('enter', function (data) {
 socket.on("shuffled", function(shuffled){
   console.log("^^^^^^^^^^^^^^",shuffled);
   shuffleCards = shuffled.shuffleCards;
-  var loader = new PIXI.loaders.Loader();
   loader
     .add([shuffleCards[0].url, shuffleCards[1].url, shuffleCards[2].url, shuffleCards[3].url, shuffleCards[4].url, shuffleCards[5].url])
-    .onComplete.once(setup).load();
+    .load(setup);
   
 });
 console.log("room:", room);
@@ -92,7 +91,7 @@ function setup() {
   //console.log(shuffleCards[0].url);
   for(var i = 0; i < 6; i++) {
     
-    playerCards[i] = new PIXI.Sprite(PIXI.loader.resources[shuffleCards[i].url].texture);
+    playerCards[i] = new PIXI.Sprite(loader.resources[shuffleCards[i].url].texture);
     playerCards[i].width = cardWidth;
     playerCards[i].height = cardHeight;
     playerCards[i].x = positionX;

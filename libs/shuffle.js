@@ -1,5 +1,10 @@
-var shuffle = function (array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+var shuffle = () => {
+    
+    let cards = [];
+    for (let i = 0; i < 36; i++) {
+        cards.push(i);
+    }
+    var currentIndex = cards.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
@@ -9,12 +14,12 @@ var shuffle = function (array) {
         currentIndex -= 1;
 
         // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+        temporaryValue = cards[currentIndex];
+        cards[currentIndex] = cards[randomIndex];
+        cards[randomIndex] = temporaryValue;
     }
 
-    return array;
+    return cards;
 }
 
 module.exports = shuffle;

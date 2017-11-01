@@ -16,6 +16,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
+var rooms = [];
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('db', 'we are connected');
@@ -91,6 +92,7 @@ app.post('/', function(req, res) {
 	//console.log(req.body.description);
 	Game.create({playersNumber: req.body.pn, description: req.body.description}, function(err, game) {
 		if(err) console.log(err);
+		console.game("game", game);
 		res.redirect('/');
 	});
 });
@@ -127,8 +129,6 @@ app.get('/logout', function(req, res){
 	res.redirect('/');
 });
 
-
-var rooms = [];
 
 app.get('/game/:id', function(req, res) {
 	req.session.pageUrl = '/page/'+req.params.id;
