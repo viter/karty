@@ -3,7 +3,7 @@ var room = document.getElementById("room").value;
 var startBtn = document.getElementById("start");
 var loader = new PIXI.loaders.Loader();
 startBtn.addEventListener("click", function() {
-  socket.emit("shuffle", cards);
+  socket.emit("shuffle", room);
   startBtn.style.display = "none";
 });
 
@@ -14,12 +14,13 @@ socket.on('enter', function (data) {
   socket.emit('join', {room: room});
 });
 
-socket.on("shuffled", function(shuffled){
-  console.log("^^^^^^^^^^^^^^",shuffled);
-  shuffleCards = shuffled.shuffleCards;
-  for (var i = 0; i < 12; i++) {
+socket.on("shuffled", function(rozdacha){
+  console.log("^^^^^^^^^^^^^^",rozdacha);
+  
+  let i = 0;
+  rozdacha.rozdacha.forEach(function(karta) {
 
-    playerCards[i] = cardSprites[shuffleCards[i]];
+    playerCards[i] = cardSprites[karta];
     playerCards[i].width = cardWidth;
     playerCards[i].height = cardHeight;
     playerCards[i].x = positionX;
@@ -34,7 +35,8 @@ socket.on("shuffled", function(shuffled){
     };
     stage.addChild(playerCards[i]);
     positionX += 70;
-  }
+    i++;
+  });
   gameLoop();
   /* loader
     .add([shuffleCards[0].url, shuffleCards[1].url, shuffleCards[2].url, shuffleCards[3].url, shuffleCards[4].url, shuffleCards[5].url])

@@ -14,13 +14,15 @@ var Shuffle = require('./libs/shuffle');
 var bodyParser = require('body-parser');
 app.set('views', './views');
 app.set('view engine', 'pug');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/test', { useMongoClient: true});
 var db = mongoose.connection;
-var rooms = [];
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('db', 'we are connected');
 });
+
+var sockets = {};
+var kolody = {};
 
 var sessionMiddleware = session({ secret: 'viter', 
 	cookie: { 
@@ -92,8 +94,7 @@ app.post('/', function(req, res) {
 	//console.log(req.body.description);
 	Game.create({playersNumber: req.body.pn, description: req.body.description}, function(err, game) {
 		if(err) console.log(err);
-		console.game("game", game);
-		res.redirect('/');
+		res.redirect('/game/'+game._id);
 	});
 });
 
@@ -132,7 +133,13 @@ app.get('/logout', function(req, res){
 
 app.get('/game/:id', function(req, res) {
 	req.session.pageUrl = '/page/'+req.params.id;
-	res.render('game', {room:req.params.id});
+	Game.findById(req.params.id, function (err, game) {
+		if (game.playersJoinedNumber < game.playersNumber) {
+			res.render('game', { room: req.params.id });
+		} else {
+			res.redirect('/');
+		}
+	});
 });
 
 app.get('/page1', function(req, res) {
@@ -148,15 +155,43 @@ io.sockets.on("connection", function(socket) {
   //console.log('socket.io session', socket.request.session);
   
   socket.on('join', room => {
-	console.log('room', room.room);
-	//socket.join(room);
+	Game.findById(room.room, function (err, game) {
+		if(game.playersJoinedNumber < game.playersNumber) {
+			game.playersJoinedNumber += 1;
+			let players = game.players;
+			players.push(socket.id);
+			sockets[socket.id] = socket;
+			game.players = players;
+			game.save(function(err, savedGame) {
+				if (err) return handleError(err);
+				socket.join(room.room);
+				console.log(`player joined ${room.room}`);
+			});
+		} else {
+			console.log(`no place in room ${room.room}`);
+		}
+	});
+	//console.log('player', socket);
   });
   socket.emit('enter', {mynews: "hello world"});
 
-  socket.on('shuffle', cards => {
-	  let shuffleCards = Shuffle(cards);
-	  socket.emit('shuffled', {shuffleCards});
-	  console.log('------------- shuffle-------');
+  socket.on('shuffle', (room) => {
+	  
+	  Game.findById(room, function (err, game) {
+	
+		kolody[room] = Shuffle();
+		console.log("koloda", kolody[room]);
+		game.players.forEach((player) => {
+			let rozdacha = [];
+			for(let i = 0; i < 6; i++) {
+				rozdacha.push(kolody[room].shift());
+			}
+			sockets[player].emit('shuffled', { rozdacha });
+		});
+		console.log("koloda", kolody[room]);
+		console.log('------------- shuffle-------');
+	  });
+	  
   });
 
 });
@@ -164,3 +199,7 @@ io.sockets.on("connection", function(socket) {
 server.listen(8080, function() {
 	console.log('Server is started and is listening port 8080');
 });
+
+function handleError(err) {
+	console.log('ERROR:', err);
+}
