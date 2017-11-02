@@ -17,9 +17,28 @@ socket.on('enter', function (data) {
 socket.on("shuffled", function(shuffled){
   console.log("^^^^^^^^^^^^^^",shuffled);
   shuffleCards = shuffled.shuffleCards;
-  loader
+  for (var i = 0; i < 12; i++) {
+
+    playerCards[i] = cardSprites[shuffleCards[i]];
+    playerCards[i].width = cardWidth;
+    playerCards[i].height = cardHeight;
+    playerCards[i].x = positionX;
+    playerCards[i].y = window.innerHeight - cardHeight - 50;
+    playerCards[i].id = "c" + i;
+    playerCards[i].interactive = true;
+    playerCards[i].mouseover = function (mouse) {
+      this.y -= 30;
+    };
+    playerCards[i].mouseout = function (mouse) {
+      this.y += 30;
+    };
+    stage.addChild(playerCards[i]);
+    positionX += 70;
+  }
+  gameLoop();
+  /* loader
     .add([shuffleCards[0].url, shuffleCards[1].url, shuffleCards[2].url, shuffleCards[3].url, shuffleCards[4].url, shuffleCards[5].url])
-    .load(setup);
+    .load(setup); */
   
 });
 console.log("room:", room);
@@ -62,6 +81,17 @@ var cards = [
         {name: "aceOfSpades", url: "/public/img/ace_of_spades.png"},
       ];
 
+var cardSprites = [];
+
+cards.forEach(function(card) {
+  loader.add(card.url)
+}, this);
+loader.load(function (loader, resources){
+  cards.forEach(function(card) {
+    cardSprites.push(new PIXI.Sprite(resources[card.url].texture));
+  });
+});
+console.log('cardSprites', cardSprites);
 var shuffleCards;
 var playerCards = [];
 var positionX = 50;
