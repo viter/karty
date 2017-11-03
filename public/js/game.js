@@ -18,7 +18,7 @@ socket.on("shuffled", function(rozdacha){
   console.log("^^^^^^^^^^^^^^",rozdacha);
   
   let i = 0;
-  rozdacha.rozdacha.forEach(function(karta) {
+  rozdacha.forEach(function(karta) {
 
     playerCards[i] = cardSprites[karta];
     playerCards[i].width = cardWidth;
@@ -42,6 +42,11 @@ socket.on("shuffled", function(rozdacha){
     .add([shuffleCards[0].url, shuffleCards[1].url, shuffleCards[2].url, shuffleCards[3].url, shuffleCards[4].url, shuffleCards[5].url])
     .load(setup); */
   
+});
+
+socket.on("putKoloda", function (kozyr, koloda) {
+  console.log("Козир", kozyr);
+  console.log("Кількість карт в колоді", koloda);
 });
 console.log("room:", room);
 var cards = [

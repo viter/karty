@@ -177,17 +177,20 @@ io.sockets.on("connection", function(socket) {
 
   socket.on('shuffle', (room) => {
 	  
-	  Game.findById(room, function (err, game) {
+	  io.in(room).clients(function (err, players) {
 	
 		kolody[room] = Shuffle();
 		console.log("koloda", kolody[room]);
-		game.players.forEach((player) => {
+		let kozyr = kolody[room].shift();
+		players.forEach((player) => {
 			let rozdacha = [];
 			for(let i = 0; i < 6; i++) {
 				rozdacha.push(kolody[room].shift());
 			}
-			sockets[player].emit('shuffled', { rozdacha });
+			sockets[player].cards = rozdacha;
+			sockets[player].emit('shuffled',  rozdacha);
 		});
+		io.to(room).emit('putKoloda', kozyr, kolody[room].length);
 		console.log("koloda", kolody[room]);
 		console.log('------------- shuffle-------');
 	  });
